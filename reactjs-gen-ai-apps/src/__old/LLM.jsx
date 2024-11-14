@@ -23,7 +23,7 @@ export default ({llm}) => {
     // The changeHandler function is called when the user types in the textarea.
 
     // code block is making an API call to an AI language model (LLM) to get responses from it.
-    // It is using the llm.invoke method to pass the user's input value, prefixed with 
+    // It is using the llm.invoke method to pass the user's input value, prefixed with
     // "Human:" and suffixed with "Assistant:", to the LLM.
     // because the model used is Anthropic's Claude
 
@@ -39,7 +39,7 @@ export default ({llm}) => {
     return (
 
         <Container
-            header={<Header variant="h2">Conversacion</Header>}>
+            header={<Header variant="h2">Conversation</Header>}>
             <Box data-id="chat-window">
             {
                     chat.length ?
@@ -67,7 +67,7 @@ export default ({llm}) => {
                     value={value}
                     disabled={loading}
                     inputMode="text" />
-                <Button fullWidth key={2} loading={loading} onClick={sendText} variant="primary" >Enviar</Button>
+                <Button fullWidth key={2} loading={loading} onClick={sendText} variant="primary" >Send</Button>
             </SpaceBetween>
         </Container>
     )
