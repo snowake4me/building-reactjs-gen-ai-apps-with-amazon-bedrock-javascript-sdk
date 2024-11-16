@@ -1,7 +1,7 @@
-# Building reactjs Generative AI apps with Amazon Bedrock and AWS JavaScript SDK 
+# Building reactjs Generative AI apps with Amazon Bedrock and AWS JavaScript SDK
 
 
-This article was written in colaboration [Enrique Rodriguez](https://github.com/ensamblador) 
+This article was written in colaboration [Enrique Rodriguez](https://github.com/ensamblador)
 
 > Get ready to embark on an exciting journey as we combine the power of Amazon Bedrock, ReactJS and the AWS JavaScript SDK to create a generative AI application with minimal integration code.
 
@@ -17,7 +17,7 @@ To enhance the flexibility and customization of the foundation model (FM), we'll
 
 
 
-![Authentication](imagenes/diagram.jpg)
+![Authentication](images/diagram.jpg)
 
 
 ## How Does This Application Work?
@@ -41,7 +41,7 @@ In the [repository of this application](https://github.com/build-on-aws/building
         }
 ```
 
-Check ["Integrating Amazon Cognito authentication and authorization with web and mobile apps" guide](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-integrate-apps.html) for invoking AWS API operations by users authenticated with Amazon Cognito. 
+Check ["Integrating Amazon Cognito authentication and authorization with web and mobile apps" guide](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-integrate-apps.html) for invoking AWS API operations by users authenticated with Amazon Cognito.
 
 > This permissions can be customized here: [IAM Role Code](https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/blob/main/reactjs-gen-ai-apps/amplify/backend/awscloudformation/override.ts)
 
@@ -54,7 +54,7 @@ This application comprises 4 demos:
 -	Knowledge Bases for Amazon Bedrock.
 -   Agents for Amazon Bedrock.
 
-![demos menu](imagenes/demos_menu.jpg)
+![demos menu](images/demos_menu.jpg)
 
 All demos have in common the use of the [BedrockRuntimeClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/bedrock-runtime/) or [BedrockAgentRuntimeClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/bedrock-agent-runtime/) to invoke the Bedrock or BedrockAgent service for a conversational interaction. The [BedrockAgentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/bedrock-agent/) is also used to list current Bedrock KnowledgeBases deployed in the same account.
 
@@ -67,7 +67,7 @@ import { BedrockAgentRuntimeClient} from "@aws-sdk/client-bedrock-agent-runtime"
 
 ### To select Large Language Model
 
-To invoke a [FM](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html) you need to specify 
+To invoke a [FM](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html) you need to specify
 the region, streaming responses, and API credentials from the [user pool authentication](https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-authentication-flow.html). For model arguments, you specify the model to sample up to 1000 tokens and for more creative and freedom of generation use a temperature of 1. We do it with the `getModel` function of [llmLib.js](https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/blob/main/reactjs-gen-ai-apps/src/llmLib.js)
 
 ```Javascript
@@ -80,8 +80,8 @@ export const getModel = async (modelId = "anthropic.claude-instant-v1") => {
         streaming: true, // this enables to get the response in streaming manner
         credentials: session.credentials, // the user credentials that allows to invoke bedrock service
         // try to limit to 1000 tokens for generation
-        // temperature = 1 means more creative and freedom 
-        modelKwargs: { max_tokens_to_sample: 1000, temperature: 1 }, 
+        // temperature = 1 means more creative and freedom
+        modelKwargs: { max_tokens_to_sample: 1000, temperature: 1 },
     });
     return model;
 };
@@ -102,13 +102,13 @@ export const getFMs = async () => {
 ```
 This code allows you to choose between [Antropic Claude 3](https://www.anthropic.com/news/claude-3-family) Sonnet or  Haiku.
 
-![demos menu](imagenes/demo-models.jpg)
+![demos menu](images/demo-models.jpg)
 
 We'll walk you through each demo group to highlight their differences.
 
 ### Chat With Amazon Bedrock Multimodal
 
-![Chat With Amazon Bedrock](imagenes/chat_with_amazon_bedrock.jpg)
+![Chat With Amazon Bedrock](images/chat_with_amazon_bedrock.jpg)
 
 [InvokeModelWithResponseStream](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModelWithResponseStream.html) is used to invoke the Amazon Bedrock model to run inference using the prompt and inference parameters provided in the request body.
 
@@ -136,7 +136,7 @@ Each input message must be an object with a `role` (user or assistant) and conte
 {"role": "user", "content": [{"type": "text", "text": "Hello, Claude"}]}
 ```
 
-![chat_multimodal_text](imagenes/chat_multimodal_text.gif)
+![chat_multimodal_text](images/chat_multimodal_text.gif)
 
 - `type` equal `image`:
 
@@ -154,7 +154,7 @@ Each input message must be an object with a `role` (user or assistant) and conte
 ]}
 ```
 
-![chat_multimodal_image](imagenes/chat_multimodal_image.gif)
+![chat_multimodal_image](images/chat_multimodal_image.gif)
 
 This is an example of a body:
 
@@ -173,26 +173,26 @@ body = {
 > 🖼️ Anthropic currently support the base64 source type for images, and the image/jpeg, image/png, image/gif, and image/webp media types. You can see the conversion of images to base64 for this app in `buildContent` function of [messageHelpers.js](https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/blob/main/reactjs-gen-ai-apps/src/helpers.js). See [more input examples](https://docs.anthropic.com/claude/reference/messages-examples).
 
 
-### Create and reuse prompt 
+### Create and reuse prompt
 
-![demos menu](imagenes/demo-prompt.jpg)
+![demos menu](images/demo-prompt.jpg)
 
 [The Messages API](https://docs.anthropic.com/claude/reference/messages_post) allows us to add context or instructions to the model through a [System Prompt](https://docs.anthropic.com/claude/docs/system-prompts)(system).
 
 
-By utilizing the System Prompt, we can assign the FM a specific role or provide it with prior instructions before feeding it the input. To enable the FM to take on multiple roles, we created a [react component](https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/blob/main/reactjs-gen-ai-apps/src/Prompt.jsx) that allows you to generate a System Prompt, store it in an [Amazon DynamoDB](https://aws.amazon.com/es/dynamodb/) table, and then select it when you want to assign that particular role to the FM. 
+By utilizing the System Prompt, we can assign the FM a specific role or provide it with prior instructions before feeding it the input. To enable the FM to take on multiple roles, we created a [react component](https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/blob/main/reactjs-gen-ai-apps/src/Prompt.jsx) that allows you to generate a System Prompt, store it in an [Amazon DynamoDB](https://aws.amazon.com/es/dynamodb/) table, and then select it when you want to assign that particular role to the FM.
 
-All the API operations for managing prompts are handled by a [AWS AppSync](https://aws.amazon.com/es/appsync/) GraphQL API endpoint. AWS AppSync allows you to create and manage GraphQL APIs, which provide a flexible and efficient way to fetch and manipulate data from multiple sources through a single endpoint. ([AWS AppSync Tutorial: DynamoDB resolvers](https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-dynamodb-resolvers.html)) 
+All the API operations for managing prompts are handled by a [AWS AppSync](https://aws.amazon.com/es/appsync/) GraphQL API endpoint. AWS AppSync allows you to create and manage GraphQL APIs, which provide a flexible and efficient way to fetch and manipulate data from multiple sources through a single endpoint. ([AWS AppSync Tutorial: DynamoDB resolvers](https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-dynamodb-resolvers.html))
 
-![demos menu](imagenes/prompt_diagram.jpg)
+![demos menu](images/prompt_diagram.jpg)
 
 Let's review an example of a prompt where we tell the FM that he is an expert in JavaScript:
 
-![demos menu](imagenes/prompt_javascript.jpg)
+![demos menu](images/prompt_javascript.jpg)
 
 In the following gif, the model provides code and detailed explanation, like an expert.
 
-![demos menu](imagenes/prompt_javascript.gif)
+![demos menu](images/prompt_javascript.gif)
 
 ### Knowledge Bases for Amazon Bedrock
 
@@ -200,11 +200,11 @@ In this demo, you will ask questions to the [Knowledge Bases for Amazon Bedrock]
 
 Questions to the Knowledge Bases for Amazon Bedrock will be asked in two ways:
 
-![Knowledge Bases for Amazon Bedrock](imagenes/knowledge_bases.jpg)
+![Knowledge Bases for Amazon Bedrock](images/knowledge_bases.jpg)
 
-**- Amazon Bedrock Retrieve => LLM:** 
+**- Amazon Bedrock Retrieve => LLM:**
 
-![Amazon Bedrock Retrieve => LLM](imagenes/bedrock_retrieve_LLM.jpg)
+![Amazon Bedrock Retrieve => LLM](images/bedrock_retrieve_LLM.jpg)
 
 List the knowledge bases with [ListKnowledgeBasesCommand](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-bedrock-agent/Class/ListKnowledgeBasesCommand/) as follows:
 
@@ -259,7 +259,7 @@ export const getConversationalRetrievalQAChain = async (llm, retriever, memory) 
     chain.questionGeneratorChain.prompt.template = "Human: " + chain.questionGeneratorChain.prompt.template +"\nAssistant:"
      // Here you finally answer the question using the retrieved documents.
 
-    chain.combineDocumentsChain.llmChain.prompt.template = `Human: Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. 
+    chain.combineDocumentsChain.llmChain.prompt.template = `Human: Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
 {context}
 
@@ -270,15 +270,15 @@ Assistant:`
 return chain
 }
 ```
-![demos menu](imagenes/demo-LLM.gif)
+![demos menu](images/demo-LLM.gif)
 
 > **Code** [BedrockKBRetrieve.jsx](https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/blob/main/reactjs-gen-ai-apps/src/BedrockKBRetrieve.jsx)
 
-**- Amazon Bedrock Retrieve & Generate:** 
+**- Amazon Bedrock Retrieve & Generate:**
 
-Here you will use a complete AWS Managed RAG service. There is no need for extra packages (Langchain) or increased complexity with prompts. You will use only one API Call to **BedrockAgentRuntimeClient**. Also the memory is managed by the service by using a **sessionId**. 
+Here you will use a complete AWS Managed RAG service. There is no need for extra packages (Langchain) or increased complexity with prompts. You will use only one API Call to **BedrockAgentRuntimeClient**. Also the memory is managed by the service by using a **sessionId**.
 
-![Amazon Bedrock Retrieve & Generate](imagenes/retrieve_and_generate.jpg)
+![Amazon Bedrock Retrieve & Generate](images/retrieve_and_generate.jpg)
 
 
 Bedrock is initialized with [BedrockAgentRuntimeClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-bedrock-agent-runtime/Class/BedrockAgentRuntimeClient/) and with [RetrieveAndGenerateCommand](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-bedrock-agent-runtime/Class/RetrieveAndGenerateCommand/) queries a knowledge base and a foundation model generates responses based on the retrieved results. In this demo Langchain is no needed.
@@ -313,7 +313,7 @@ export const ragBedrockKnowledgeBase = async (sessionId, knowledgeBaseId, query,
     return response
 }
 ```
-![demos menu](imagenes/demo-bedrock-ret.gif)
+![demos menu](images/demo-bedrock-ret.gif)
 
 > **Code** [BedrockKBAndGenerate.jsx](https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/blob/main/reactjs-gen-ai-apps/src/BedrockKBAndGenerate.jsx)
 
@@ -376,11 +376,11 @@ export const invokeBedrockAgent = async (sessionId, agentId, agentAlias, query) 
 ```
 In the agent of this first gif, create a ticket for technical support:
 
-![demos menu](imagenes/demo-agent-create-ticket.gif)
+![demos menu](images/demo-agent-create-ticket.gif)
 
 In the second gif the user asks the agent about the status of the ticket:
 
-![demos menu](imagenes/demo-agent-query-ticket.gif)
+![demos menu](images/demo-agent-query-ticket.gif)
 
 ## Let's Deploy React Generative AI Application With Amazon Bedrock and AWS Javascript SDK
 
@@ -388,7 +388,7 @@ In the second gif the user asks the agent about the status of the ticket:
 
 The application is built with [AWS Amplify](https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html). To deploy it in your account:
 
-1. first [fork](https://docs.github.com/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repo: 
+1. first [fork](https://docs.github.com/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repo:
 
 ```
 https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock-javascript-sdk/forks
@@ -396,15 +396,15 @@ https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock
 
 2. Create a [New branch](https://docs.github.com/en/desktop/making-changes-in-a-branch/managing-branches-in-github-desktop): `dev-branch`.
 
-3. Then follow the steps in [Getting started with existing code guide](https://docs.aws.amazon.com/amplify/latest/userguide/getting-started.html). 
+3. Then follow the steps in [Getting started with existing code guide](https://docs.aws.amazon.com/amplify/latest/userguide/getting-started.html).
 
 4. In **Step 1 Add repository branch**, select main branch and **Connecting a monorepo? Pick a folder** and enter `reactjs-gen-ai-apps` as a root directory.
 
-![Add repository branch](imagenes/repository_branch.jpg)
+![Add repository branch](images/repository_branch.jpg)
 
 5. For the next Step, **Build settings**, select `building-a-gen-ai-gen-ai-personal-assistant-reactjs-apps(this app)` as App name, in Enviroment select **Create a new envitoment** and write `dev`
 
-![App build and test settings](imagenes/build_settings.jpg)
+![App build and test settings](images/build_settings.jpg)
 
 6. If there is no existing role, create a [new one to service Amplify](https://docs.aws.amazon.com/amplify/latest/userguide/how-to-service-role-amplify-console.html).
 
@@ -414,21 +414,21 @@ https://github.com/build-on-aws/building-reactjs-gen-ai-apps-with-amazon-bedrock
 
 Once the application has been deployed, go to the link in the application, which is located under the white box.
 
-![Amplify Deploy](imagenes/amplify_done.jpg)
+![Amplify Deploy](images/amplify_done.jpg)
 
 When you enter the link, the Sing In window will appear, so you must create a  [Amazon Cognito User Pool](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html) User.
 
-![Sing In Window](imagenes/sing_in.jpg)
+![Sing In Window](images/sing_in.jpg)
 
 #### ✅ How To Create A User
 
-In the App go to **Backend environments** and click on Authentication. 
+In the App go to **Backend environments** and click on Authentication.
 
-![Backend environments](imagenes/backend_env.jpg)
+![Backend environments](images/backend_env.jpg)
 
 Then, under Authentication, click **View in Cognito**:
 
-![View in Cognito](imagenes/view_in_cognito.jpg)
+![View in Cognito](images/view_in_cognito.jpg)
 
 In the **User Pool**, click the name of your user pool and **Create User**.
 
@@ -438,11 +438,11 @@ In the **User Pool**, click the name of your user pool and **Create User**.
 
 ## Let's Try React Generative AI Application With Amazon Bedrock Javascript SDK
 
-Before you can use a foundation model in Amazon Bedrock, you must request access to it. Follow the step in [Add model access guide](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html). 
+Before you can use a foundation model in Amazon Bedrock, you must request access to it. Follow the step in [Add model access guide](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html).
 
 Go to the application link and sign in with the user you created.
 
-### 🤖🚀 Try and test the app! 
+### 🤖🚀 Try and test the app!
 
 ## Conclusion
 
